@@ -20,8 +20,13 @@ import java.util.*;
 public class App {
   public static void main( String[] args ) throws IOException {
 
+    String BROWSER_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\Chrome.exe";
+
     try ( Playwright playwright = Playwright.create() ) {
-      Browser browser = playwright.firefox().launch( new BrowserType.LaunchOptions().setHeadless(true) );
+      BrowserType chromium = playwright.chromium();
+      Browser browser = chromium.launch(new BrowserType.LaunchOptions()
+          .setHeadless(false)
+          .setExecutablePath(Paths.get(BROWSER_PATH)));
       BrowserContext context = browser.newContext();
 
       // Fetch the ECharts CDN script contents
@@ -35,9 +40,6 @@ public class App {
 
       Page page = context.newPage();
 
-      // Wait for the page to load or any other necessary actions
-//      page.waitForTimeout(10000);
-
       String filename="exportPDF/src/main/java/resources/echartsBase64.js";
 
       Path pathToFile = Paths.get(filename);
@@ -47,25 +49,7 @@ public class App {
       jsCode = jsCode.replace( "@height", "700" );
       jsCode = jsCode.replace( "@width", "1200" );
 
-      // Execute the JavaScript function with arguments
-//      Object result = page.evaluate("(() => { " + jsCode + " return getChartAsBase64(); })()");
-//      Object result = page.evaluate(jsCode);
       JSHandle result = page.evaluateHandle(jsCode);
-//      page.evaluateHandle(jsCode);
-//
-//      System.out.println("Result: " + result);
-
-//      Map<String, Object> Largs = new HashMap<>();
-//      Largs.put("height", "Hello");
-//      Largs.put("width", "World");
-//      JSHandle result = page.evaluateHandle(
-//          "({height, width}) => { " + jsCode + " return myFunction(height, width); }", Largs);
-//      System.out.println("Result: " + result);
-
-//      page.waitForTimeout(3000);
-// Take a screenshot of the entire page
-//      page.screenshot(new Page.ScreenshotOptions()
-//          .setPath(Paths.get("screenshot.png")).setFullPage(true));
 
 
       byte[] imageArray = decodeBase64ToImage( result.toString() );
