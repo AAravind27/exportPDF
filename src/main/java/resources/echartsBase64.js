@@ -46,49 +46,17 @@ function getEChartBase64() {
   });
   const len = "data:image/png;base64,".length;
   base64 = base64.substring(len);
-  return base64;
 
-  // Clean up: dispose of the chart and remove the temporary container
-  // chart.dispose();
-  // document.body.removeChild(chartContainer);
+  setTimeout(function() {
+    // Dispose of the ECharts instance
+    chart.dispose();
+    console.log('ECharts instance disposed');
+    document.body.removeChild(chartContainer);
+  }, 1000);
+
+  return base64;
 }
 
 // Function to be called from outside to get the base64 string
 
 getEChartBase64();
-
-// function createChart() {
-//   var chartContainer = document.createElement("div");
-//   chartContainer.style.width = "@width" + "px";
-//   chartContainer.style.height = "@height" + "px";
-//   document.body.appendChild(chartContainer);
-//   // Initialize the echarts instance
-//   var myChart = echarts.init(chartContainer);
-//
-//   // Specify the configuration items and data for the chart
-//   var option = {
-//     title: {
-//       text: "ECharts Getting Started Example",
-//     },
-//     tooltip: {},
-//     legend: {
-//       data: ["sales"],
-//     },
-//     xAxis: {
-//       data: ["Shirts", "Cardigans", "Chiffon", "Pants", "Heels", "Socks"],
-//     },
-//     yAxis: {},
-//     series: [
-//       {
-//         name: "sales",
-//         type: "bar",
-//         data: [5, 20, 36, 10, 10, 20],
-//       },
-//     ],
-//   };
-//
-//   // Set the chart options and data
-//   myChart.setOption(option);
-// }
-//
-// createChart();

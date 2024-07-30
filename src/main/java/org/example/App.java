@@ -4,6 +4,8 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.impl.driver.Driver;
+import com.microsoft.playwright.options.LoadState;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -20,13 +22,22 @@ import java.util.*;
 public class App {
   public static void main( String[] args ) throws IOException {
 
-    String BROWSER_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\Chrome.exe";
+//    String BROWSER_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\Chrome.exe";
+//    System.getenv().forEach((k, v) -> {
+//      System.out.println(k + ":" + v);
+//    });
 
-    try ( Playwright playwright = Playwright.create() ) {
-      BrowserType chromium = playwright.chromium();
+    Playwright.CreateOptions options = new Playwright.CreateOptions();
+    Map<String, String> env = new HashMap<>();
+    env.put( "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "true" );
+    options.setEnv( env );
+    installFirefox();
+
+    try ( Playwright playwright = Playwright.create(options) ) {
+      BrowserType chromium = playwright.firefox();
       Browser browser = chromium.launch(new BrowserType.LaunchOptions()
-          .setHeadless(false)
-          .setExecutablePath(Paths.get(BROWSER_PATH)));
+          .setHeadless(false));
+//          .setExecutablePath(Paths.get(BROWSER_PATH)));
       BrowserContext context = browser.newContext();
 
       // Fetch the ECharts CDN script contents
@@ -50,14 +61,14 @@ public class App {
       jsCode = jsCode.replace( "@width", "1200" );
 
       JSHandle result = page.evaluateHandle(jsCode);
+      page.screenshot( new Page.ScreenshotOptions().setPath( Paths.get( "screenshot.png" ) ).setFullPage( true ) );
 
-
-      byte[] imageArray = decodeBase64ToImage( result.toString() );
-
-     // Convert the byte array to an image file
-      ByteArrayInputStream bis = new ByteArrayInputStream( imageArray );
-      BufferedImage image = ImageIO.read( bis );
-      ImageIO.write( image, "png", new File( "output.png" ) );
+//      byte[] imageArray = decodeBase64ToImage( result.toString() );
+//
+//     // Convert the byte array to an image file
+//      ByteArrayInputStream bis = new ByteArrayInputStream( imageArray );
+//      BufferedImage image = ImageIO.read( bis );
+//      ImageIO.write( image, "png", new File( "output.png" ) );
      // Optionally, convert the image to a PDF
 //      convertImageToPDF( "output.png", "output.pdf" );
 
@@ -84,5 +95,25 @@ public class App {
   }
   private static byte[] decodeBase64ToImage( String base64String ) {
     return Base64.getDecoder().decode( base64String );
+  }
+
+  public static void installFirefox() {
+    Driver driver = Driver.createAndInstall(Collections.emptyMap(), false);
+    ProcessBuilder pb = driver.createProcessBuilder();
+    pb.command().add("install");
+    pb.command().add("firefox");
+    pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+    pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+
+    try {
+      Process p = pb.start();
+
+      // Wait for the process to complete and get the exit code
+      int exitCode = p.waitFor();
+      System.out.println("Process exited with code: " + exitCode);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
