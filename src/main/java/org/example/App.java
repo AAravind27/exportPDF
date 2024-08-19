@@ -1,8 +1,8 @@
 package org.example;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfWriter;
+//import com.itextpdf.text.Document;
+//import com.itextpdf.text.Image;
+//import com.itextpdf.text.pdf.PdfWriter;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.impl.driver.Driver;
 import com.microsoft.playwright.options.LoadState;
@@ -80,19 +80,19 @@ public class App {
       throw new RuntimeException(e);
     }
   }
-  public static void convertImageToPDF( String inputImagePath, String outputPdfPath ) {
-    try {
-//      BufferedImage image = ImageIO.read( new File( inputImagePath ) );
-      Document document = new Document();
-      PdfWriter.getInstance( document, new FileOutputStream( outputPdfPath ) );
-      document.open();
-      Image pdfImage = com.itextpdf.text.Image.getInstance( inputImagePath );
-      document.add( pdfImage );
-      document.close();
-    } catch ( Exception e ) {
-      e.printStackTrace();
-    }
-  }
+//  public static void convertImageToPDF( String inputImagePath, String outputPdfPath ) {
+//    try {
+////      BufferedImage image = ImageIO.read( new File( inputImagePath ) );
+//      Document document = new Document();
+//      PdfWriter.getInstance( document, new FileOutputStream( outputPdfPath ) );
+//      document.open();
+//      Image pdfImage = com.itextpdf.text.Image.getInstance( inputImagePath );
+//      document.add( pdfImage );
+//      document.close();
+//    } catch ( Exception e ) {
+//      e.printStackTrace();
+//    }
+//  }
   private static byte[] decodeBase64ToImage( String base64String ) {
     return Base64.getDecoder().decode( base64String );
   }
